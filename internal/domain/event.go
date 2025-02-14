@@ -5,6 +5,7 @@ import "time"
 type EventDomainTicket interface {
 	GetID() uint
 	GetTicketID() uint
+	Type() string
 }
 
 type EventTicket struct {
@@ -34,8 +35,16 @@ func NewTicketAcceptedEvent(ticketID uint, readyBy, acceptBy time.Time) *TicketA
 	return &TicketAcceptedEvent{NewEventTicket(ticketID), readyBy, acceptBy}
 }
 
+func (t TicketAcceptedEvent) Type() string {
+	return "TicketAcceptedEvent"
+}
+
 type TicketCancelCreateEvent struct {
 	EventTicket
+}
+
+func (t TicketCancelCreateEvent) Type() string {
+	return "TicketCancelCreateEvent"
 }
 
 func NewTicketCancelCreateEvent(ticketID uint) *TicketCancelCreateEvent {
@@ -47,11 +56,19 @@ type TicketCanceledEvent struct {
 	Force bool
 }
 
+func (t TicketCanceledEvent) Type() string {
+	return "TicketCanceledEvent"
+}
+
 func NewTicketCanceledEvent(ticketID uint, force bool) *TicketCanceledEvent {
 	return &TicketCanceledEvent{NewEventTicket(ticketID), force}
 }
 
 type TicketUndoCanceledEvent EventTicket
+
+func (t TicketUndoCanceledEvent) Type() string {
+	return "TicketUndoCanceledEvent"
+}
 
 func NewTicketUndoCanceledEvent(ticketID uint) *TicketUndoCanceledEvent {
 	e := TicketUndoCanceledEvent(NewEventTicket(ticketID))
@@ -63,6 +80,10 @@ type TicketChangeLineItemEvent struct {
 	LineItems []TicketLineItem
 }
 
+func (t TicketChangeLineItemEvent) Type() string {
+	return "TicketChangeLineItemEvent"
+}
+
 func NewTicketChangeLineItemEvent(ticketID uint, lineItems []TicketLineItem) *TicketChangeLineItemEvent {
 	return &TicketChangeLineItemEvent{NewEventTicket(ticketID), lineItems}
 }
@@ -70,6 +91,10 @@ func NewTicketChangeLineItemEvent(ticketID uint, lineItems []TicketLineItem) *Ti
 type TicketCreateEvent struct {
 	EventTicket
 	TicketDetails []TicketLineItem
+}
+
+func (t TicketCreateEvent) Type() string {
+	return "TicketCreateEvent"
 }
 
 func NewTicketCreateEvent(ticketID uint, ticketDetails []TicketLineItem) *TicketCreateEvent {
@@ -81,6 +106,10 @@ type TicketPickedUpEvent struct {
 	PickedUpTime time.Time
 }
 
+func (t TicketPickedUpEvent) Type() string {
+	return "TicketPickedUpEvent"
+}
+
 func NewTicketPickedUpEvent(ticketID uint, pickedUpTime time.Time) *TicketPickedUpEvent {
 	return &TicketPickedUpEvent{NewEventTicket(ticketID), pickedUpTime}
 }
@@ -90,6 +119,10 @@ type TicketPreparationCompletedEvent struct {
 	ReadyForPickupTime time.Time
 }
 
+func (t TicketPreparationCompletedEvent) Type() string {
+	return "TicketPreparationCompletedEvent"
+}
+
 func NewTicketPreparationCompletedEvent(ticketID uint, redyForPickupTime time.Time) *TicketPreparationCompletedEvent {
 	return &TicketPreparationCompletedEvent{NewEventTicket(ticketID), redyForPickupTime}
 }
@@ -97,6 +130,10 @@ func NewTicketPreparationCompletedEvent(ticketID uint, redyForPickupTime time.Ti
 type TicketPreparingStartedEvent struct {
 	EventTicket
 	PreparingTime time.Time
+}
+
+func (t TicketPreparingStartedEvent) Type() string {
+	return "TicketPreparingStartedEvent"
 }
 
 func NewTicketPreparingStartedEvent(ticketID uint, preparingTime time.Time) *TicketPreparingStartedEvent {

@@ -79,85 +79,75 @@ func (t *Ticket) ApplyEvent(e EventDomainTicket) error {
 }
 
 func (t *Ticket) ConfirmCreate() (*TicketCreateEvent, error) {
-	if err := t.state.confirmCreate(); err == nil {
-		return NewTicketCreateEvent(t.ID, t.LineItems), nil
-	} else {
+	if err := t.state.confirmCreate(); err != nil {
 		return nil, err
 	}
+	return NewTicketCreateEvent(t.ID, t.LineItems), nil
 }
 
 func (t *Ticket) CancelCreate() (*TicketCancelCreateEvent, error) {
-	if err := t.state.cancelCreate(); err == nil {
-		return NewTicketCancelCreateEvent(t.ID), nil
-	} else {
+	if err := t.state.cancelCreate(); err != nil {
 		return nil, err
 	}
+	return NewTicketCancelCreateEvent(t.ID), nil
 }
 
 func (t *Ticket) Accept(redyBy time.Time) (*TicketAcceptedEvent, error) {
 	acceptTime := time.Now()
-	if err := t.state.accept(redyBy, acceptTime); err == nil {
-		return NewTicketAcceptedEvent(t.ID, redyBy, acceptTime), nil
-	} else {
+	if err := t.state.accept(redyBy, acceptTime); err != nil {
 		return nil, err
 	}
+	return NewTicketAcceptedEvent(t.ID, redyBy, acceptTime), nil
 }
 
 func (t *Ticket) Preparing() (*TicketPreparingStartedEvent, error) {
 	preparingTime := time.Now()
-	if err := t.state.preparing(preparingTime); err == nil {
-		return NewTicketPreparingStartedEvent(t.ID, preparingTime), nil
-	} else {
+	if err := t.state.preparing(preparingTime); err != nil {
 		return nil, err
 	}
+	return NewTicketPreparingStartedEvent(t.ID, preparingTime), nil
 }
 
 func (t *Ticket) ReadyForPickup() (*TicketPreparationCompletedEvent, error) {
 	readyForPickUp := time.Now()
-	if err := t.state.readyForPickUp(readyForPickUp); err == nil {
-		return NewTicketPreparationCompletedEvent(t.ID, readyForPickUp), nil
-	} else {
+	if err := t.state.readyForPickUp(readyForPickUp); err != nil {
 		return nil, err
 	}
+	return NewTicketPreparationCompletedEvent(t.ID, readyForPickUp), nil
 }
 
 func (t *Ticket) PickedUp() (*TicketPickedUpEvent, error) {
 	pickedUpTime := time.Now()
-	if err := t.state.pickedUp(pickedUpTime); err == nil {
-		return NewTicketPickedUpEvent(t.ID, pickedUpTime), nil
-	} else {
+	if err := t.state.pickedUp(pickedUpTime); err != nil {
 		return nil, err
 	}
+	return NewTicketPickedUpEvent(t.ID, pickedUpTime), nil
 }
 
 func (t *Ticket) ChangeLineItemQuantity(lineItems []TicketLineItem) (*TicketChangeLineItemEvent, error) {
-	if err := t.state.changeLineItem(lineItems); err == nil {
-		return NewTicketChangeLineItemEvent(t.ID, lineItems), nil
-	} else {
+	if err := t.state.changeLineItem(lineItems); err != nil {
 		return nil, err
 	}
+	return NewTicketChangeLineItemEvent(t.ID, lineItems), nil
 }
 
 func (t *Ticket) Cancel() (*TicketCanceledEvent, error) {
-	if err := t.state.cancel(); err == nil {
-		return NewTicketCanceledEvent(t.ID, t.state == t.canceledState), nil
-	} else {
+	if err := t.state.cancel(); err != nil {
 		return nil, err
 	}
+	return NewTicketCanceledEvent(t.ID, t.state == t.canceledState), nil
 }
 
 func (t *Ticket) ConfirmCancel() (*TicketCanceledEvent, error) {
-	if err := t.state.confirmCancel(); err == nil {
-		return NewTicketCanceledEvent(t.ID, true), nil
-	} else {
+	if err := t.state.confirmCancel(); err != nil {
 		return nil, err
 	}
+	return NewTicketCanceledEvent(t.ID, true), nil
 }
 
 func (t *Ticket) UndoCancel() (*TicketUndoCanceledEvent, error) {
-	if err := t.state.undoCancel(); err == nil {
-		return NewTicketUndoCanceledEvent(t.ID), nil
-	} else {
+	if err := t.state.undoCancel(); err != nil {
 		return nil, err
 	}
+	return NewTicketUndoCanceledEvent(t.ID), nil
 }
