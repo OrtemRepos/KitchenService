@@ -64,15 +64,16 @@ func NewTicketCanceledEvent(ticketID uint, force bool) *TicketCanceledEvent {
 	return &TicketCanceledEvent{NewEventTicket(ticketID), force}
 }
 
-type TicketUndoCanceledEvent EventTicket
+type TicketUndoCanceledEvent struct {
+	EventTicket
+}
 
 func (t TicketUndoCanceledEvent) Type() string {
 	return "TicketUndoCanceledEvent"
 }
 
 func NewTicketUndoCanceledEvent(ticketID uint) *TicketUndoCanceledEvent {
-	e := TicketUndoCanceledEvent(NewEventTicket(ticketID))
-	return &e
+	return &TicketUndoCanceledEvent{NewEventTicket(ticketID)}
 }
 
 type TicketChangeLineItemEvent struct {
@@ -90,6 +91,7 @@ func NewTicketChangeLineItemEvent(ticketID uint, lineItems []TicketLineItem) *Ti
 
 type TicketCreateEvent struct {
 	EventTicket
+	RestaurantID  uint
 	TicketDetails []TicketLineItem
 }
 
@@ -97,8 +99,8 @@ func (t TicketCreateEvent) Type() string {
 	return "TicketCreateEvent"
 }
 
-func NewTicketCreateEvent(ticketID uint, ticketDetails []TicketLineItem) *TicketCreateEvent {
-	return &TicketCreateEvent{NewEventTicket(ticketID), ticketDetails}
+func NewTicketCreateEvent(restaurantID, ticketID uint, ticketDetails []TicketLineItem) *TicketCreateEvent {
+	return &TicketCreateEvent{NewEventTicket(ticketID), restaurantID, ticketDetails}
 }
 
 type TicketPickedUpEvent struct {

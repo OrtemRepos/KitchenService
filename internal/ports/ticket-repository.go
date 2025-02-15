@@ -2,10 +2,10 @@ package ports
 
 import (
 	"github.com/OrtemRepos/KitchenService/internal/domain"
-	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 )
 
 type TicketRepository interface {
-	Save(domain.Ticket) error
-	Load(ticketID uuid.UUID) (*domain.Ticket, error)	
+	Save(tx sqlx.Tx, ticket domain.Ticket) error
+	Load(tx sqlx.Tx, ticketID uint) (*domain.Ticket, error)
 }

@@ -1,6 +1,6 @@
 package domain
 
 type Restaurant struct {
-	ID uint
+	ID   uint
 	Menu []MenuItem
 }
