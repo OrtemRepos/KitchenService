@@ -11,6 +11,7 @@ import (
 )
 
 type KitchenService struct {
+	db     *sqlx.DB
 	logger *zap.Logger
 
 	ticketRepository           ports.TicketRepository
@@ -23,10 +24,16 @@ func (ks *KitchenService) CreateMenu(id uint, menu []domain.MenuItem) error {
 	return ks.restaurantRepository.Save(restaurant)
 }
 
-func (ks *KitchenService) CreateTicket(ctx context.Context, tx sqlx.Tx,
+func (ks *KitchenService) CreateTicket(ctx context.Context,
 	restaurantID, ticketID uint,
 	lineItems []domain.TicketLineItem) (*domain.Ticket, error) {
 	ticket := domain.NewTicket(restaurantID, ticketID, lineItems)
+
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return nil, err
+	}
 
 	if err := ks.ticketRepository.Save(tx, *ticket); err != nil {
 		ks.logger.Error("ticket saving error", zap.Error(err))
@@ -35,7 +42,13 @@ func (ks *KitchenService) CreateTicket(ctx context.Context, tx sqlx.Tx,
 	return ticket, nil
 }
 
-func (ks *KitchenService) ConfirmCreate(ctx context.Context, tx sqlx.Tx, ticketID uint) error {
+func (ks *KitchenService) ConfirmCreate(ctx context.Context, ticketID uint) error {
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return err
+	}
+
 	ticket, err := ks.ticketRepository.Load(tx, ticketID)
 	if err != nil {
 		ks.logger.Error(
@@ -58,7 +71,13 @@ func (ks *KitchenService) ConfirmCreate(ctx context.Context, tx sqlx.Tx, ticketI
 	return nil
 }
 
-func (ks *KitchenService) CancelCreate(ctx context.Context, tx sqlx.Tx, ticketID uint) error {
+func (ks *KitchenService) CancelCreate(ctx context.Context, ticketID uint) error {
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return err
+	}
+
 	ticket, err := ks.ticketRepository.Load(tx, ticketID)
 	if err != nil {
 		ks.logger.Error(
@@ -81,7 +100,13 @@ func (ks *KitchenService) CancelCreate(ctx context.Context, tx sqlx.Tx, ticketID
 	return nil
 }
 
-func (ks *KitchenService) Cancel(ctx context.Context, tx sqlx.Tx, ticketID uint) error {
+func (ks *KitchenService) Cancel(ctx context.Context, ticketID uint) error {
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return err
+	}
+
 	ticket, err := ks.ticketRepository.Load(tx, ticketID)
 	if err != nil {
 		ks.logger.Error(
@@ -104,7 +129,13 @@ func (ks *KitchenService) Cancel(ctx context.Context, tx sqlx.Tx, ticketID uint)
 	return nil
 }
 
-func (ks *KitchenService) ConfirmCancel(ctx context.Context, tx sqlx.Tx, ticketID uint) error {
+func (ks *KitchenService) ConfirmCancel(ctx context.Context, ticketID uint) error {
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return err
+	}
+
 	ticket, err := ks.ticketRepository.Load(tx, ticketID)
 	if err != nil {
 		ks.logger.Error(
@@ -127,7 +158,13 @@ func (ks *KitchenService) ConfirmCancel(ctx context.Context, tx sqlx.Tx, ticketI
 	return nil
 }
 
-func (ks *KitchenService) UndoCancel(ctx context.Context, tx sqlx.Tx, ticketID uint) error {
+func (ks *KitchenService) UndoCancel(ctx context.Context, ticketID uint) error {
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return err
+	}
+
 	ticket, err := ks.ticketRepository.Load(tx, ticketID)
 	if err != nil {
 		ks.logger.Error(
@@ -150,7 +187,13 @@ func (ks *KitchenService) UndoCancel(ctx context.Context, tx sqlx.Tx, ticketID u
 	return nil
 }
 
-func (ks *KitchenService) Accept(ctx context.Context, tx sqlx.Tx, ticketID uint, redyBy time.Time) error {
+func (ks *KitchenService) Accept(ctx context.Context, ticketID uint, redyBy time.Time) error {
+	tx, err := ks.db.BeginTxx(ctx, nil)
+	if err != nil {
+		ks.logger.Error("cannot initiate a transaction", zap.Error(err))
+		return err
+	}
+
 	ticket, err := ks.ticketRepository.Load(tx, ticketID)
 	if err != nil {
 		ks.logger.Error(
