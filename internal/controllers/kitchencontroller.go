@@ -15,8 +15,13 @@ type KitchenController struct {
 	kitchenService service.KitchenService
 }
 
-func NewKitchenController(router *gin.Engine, logger *zap.Logger, kitchenService service.KitchenService) *KitchenController {
-	return &KitchenController{logger, kitchenService}
+func NewKitchenController(
+		path string, router *gin.Engine, logger *zap.Logger,
+		kitchenService service.KitchenService,
+	) *KitchenController {
+	kc := &KitchenController{logger, kitchenService}
+	router.POST(path, kc.acceptTicket)
+	return kc
 }
 
 func (kc *KitchenController) acceptTicket(c *gin.Context) {
@@ -27,13 +32,13 @@ func (kc *KitchenController) acceptTicket(c *gin.Context) {
 		return
 	}
 
-	var form ticketAcceptance
-	if err := c.ShouldBind(&form); err != nil {
+	var ticket TicketAcceptance
+	if err := c.ShouldBindJSON(&ticket); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	if err := kc.kitchenService.Accept(context.Background(), uint(ticketID), form.ReadyBy); err != nil {
+	if err := kc.kitchenService.Accept(context.Background(), uint(ticketID), ticket.ReadyBy); err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}

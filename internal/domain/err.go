@@ -33,3 +33,5 @@ var ErrMismatchedID = fmt.Errorf("Aggregate and entity ids do not match")
 var ErrUnsupportedEvent = fmt.Errorf("Unsupported event type")
 
 var ErrTooLate = fmt.Errorf("Too late to change the order")
+
+var ErrNotFound = fmt.Errorf("Not found")
